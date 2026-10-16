@@ -97,3 +97,8 @@
 - Initialized git at the project root (branch main), .gitignore excludes s3-data/ (real student/staff identifiers, ~700 MB), .venv, cdk.out, outputs.json, .claude/. Scanned staged files for secrets: none. 18 files committed (ae934e5).
 - Remote git@github.com:UITS-AI-Poc/urr-mock-api.git does not exist / not visible; `gh repo create` failed: user bbendick lacks CreateRepository permission in UITS-AI-Poc. Not pushed. Did not fall back to another owner (user named this destination). Remote `origin` added locally.
 - Open: someone with org rights must create the (private recommended) empty repo or grant access; then `git push -u origin main`.
+
+### 2026-10-16 — Remote switched to the azedu identity
+- User's edu identity is the SSH alias `github.com-azedu` (authenticates as GitHub user bbendick-azedu). Set origin to git@github.com-azedu:UITS-AI-Poc/urr-mock-api.git.
+- `git ls-remote` fails: UITS-AI-Poc enforces SAML SSO and this SSH key is not authorized for the org. Needs the user to authorize the key (GitHub > Settings > SSH and GPG keys > Configure SSO > Authorize for UITS-AI-Poc). Not pushed. Whether the repo already exists is still unknown (SSO error hides it).
+- Commits so far are authored with the default git identity (bbendick@gmail.com), not the edu identity — unresolved, user to decide.
