@@ -92,3 +92,8 @@
 - OpenAPI: `mock/generate/generate_openapi.py` -> `mock/openapi.json` (3.0.3, 17 paths, 26 schemas, ApiKeyAuth). Validated with openapi-spec-validator, and every dataset record (221 students, 485 faculty, 43 programs, 877 courses, 465 departments) validates against its schema. Fixed a spec bug found that way: Faculty.project is null for 1 researcher; OpenAPI 3.0 needs `nullable` on the Project schema itself (nullable beside a $ref/allOf does not work).
 - README updated with deployed URL, key retrieval, redeploy steps.
 - Open: one shared key for all callers (rotate by replacing the ApiKey resource); real faculty names/emails are behind the key but still served; no WAF; frontend not built.
+
+### 2026-10-16 — Git repo (local only so far)
+- Initialized git at the project root (branch main), .gitignore excludes s3-data/ (real student/staff identifiers, ~700 MB), .venv, cdk.out, outputs.json, .claude/. Scanned staged files for secrets: none. 18 files committed (ae934e5).
+- Remote git@github.com:UITS-AI-Poc/urr-mock-api.git does not exist / not visible; `gh repo create` failed: user bbendick lacks CreateRepository permission in UITS-AI-Poc. Not pushed. Did not fall back to another owner (user named this destination). Remote `origin` added locally.
+- Open: someone with org rights must create the (private recommended) empty repo or grant access; then `git push -u origin main`.
