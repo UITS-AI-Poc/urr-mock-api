@@ -102,3 +102,6 @@
 - User's edu identity is the SSH alias `github.com-azedu` (authenticates as GitHub user bbendick-azedu). Set origin to git@github.com-azedu:UITS-AI-Poc/urr-mock-api.git.
 - `git ls-remote` fails: UITS-AI-Poc enforces SAML SSO and this SSH key is not authorized for the org. Needs the user to authorize the key (GitHub > Settings > SSH and GPG keys > Configure SSO > Authorize for UITS-AI-Poc). Not pushed. Whether the repo already exists is still unknown (SSO error hides it).
 - Commits so far are authored with the default git identity (bbendick@gmail.com), not the edu identity — unresolved, user to decide.
+
+### 2026-10-16 — Pushed
+- SSO authorization done by user; `git ls-remote` succeeded (repo existed, empty). Pushed main (63c107b) to git@github.com-azedu:UITS-AI-Poc/urr-mock-api.git. Verified: remote HEAD == local HEAD; fresh clone has 18 files, 0 from s3-data/. Repo visibility not checked.
