@@ -1,0 +1,11 @@
+# Raw source data: real student/staff identifiers and ~700 MB. Never commit.
+s3-data/
+
+# Build / env artifacts
+.venv/
+cdk.out/
+outputs.json
+__pycache__/
+*.pyc
+.DS_Store
+.claude/

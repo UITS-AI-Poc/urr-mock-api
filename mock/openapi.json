@@ -1,0 +1,1883 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "URR mock API",
+    "version": "1.0.0",
+    "description": "Read-only mock of the NSIF student-interest service plus CatCloud extension endpoints. Student data is synthetic; faculty are real (scraped from ur.arizona.edu on 2026-10-16); projects and match scores are synthetic/heuristic. Operations tagged `Extension` do not exist in the real NSIF service."
+  },
+  "servers": [
+    {
+      "url": "https://nzm36p0h50.execute-api.us-west-2.amazonaws.com/prod/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "NSIF",
+      "description": "Ported from services/nsif/api/routes.py"
+    },
+    {
+      "name": "Extension",
+      "description": "Mock-only endpoints for the CatCloud prototype"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/terms": {
+      "get": {
+        "summary": "List available terms with counts",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NSIFTermsResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/stats": {
+      "get": {
+        "summary": "Aggregate statistics across all terms",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NSIFStatsResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/stats/term/{term}": {
+      "get": {
+        "summary": "Aggregate statistics for one term",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NSIFStatsResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "term",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "e.g. F24"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/students/demo-sample": {
+      "get": {
+        "summary": "Sample of students for the demo dropdown (personas first)",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NSIFDemoSampleResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/students/by-netid/{net_id}": {
+      "get": {
+        "summary": "Latest-term record by netID",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NSIFStudentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "net_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "e.g. aramis.demo"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/students/{student_id}": {
+      "get": {
+        "summary": "Latest-term record for a student",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NSIFStudentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "student_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/students/{student_id}/history": {
+      "get": {
+        "summary": "All term records for a student, newest first",
+        "tags": [
+          "NSIF"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NSIFStudentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "student_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/students/search": {
+      "post": {
+        "summary": "Search students with filters and pagination",
+        "tags": [
+          "NSIF"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NSIFFilterParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NSIFStudentListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/students/{student_id}/courses": {
+      "get": {
+        "summary": "EXTENSION: a student's enrollments by term",
+        "tags": [
+          "Extension"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentCoursesResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "student_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/courses": {
+      "get": {
+        "summary": "EXTENSION: course catalog",
+        "tags": [
+          "Extension"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Substring of the course code"
+          },
+          {
+            "name": "department_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/departments": {
+      "get": {
+        "summary": "EXTENSION: departments",
+        "tags": [
+          "Extension"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartmentList"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "has_courses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/programs": {
+      "get": {
+        "summary": "EXTENSION: programs",
+        "tags": [
+          "Extension"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/programs/{program_id}": {
+      "get": {
+        "summary": "EXTENSION: one program",
+        "tags": [
+          "Extension"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Program"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "program_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/faculty": {
+      "get": {
+        "summary": "EXTENSION: researchers with their (synthetic) projects",
+        "tags": [
+          "Extension"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacultyList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "college",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Paid | Volunteer | For credit"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "rolling",
+                "not_yet_open",
+                "closed"
+              ]
+            }
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/faculty/{faculty_id}": {
+      "get": {
+        "summary": "EXTENSION: one researcher (full record)",
+        "tags": [
+          "Extension"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Faculty"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "faculty_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The person slug, e.g. quinn-burke"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/matches": {
+      "post": {
+        "summary": "EXTENSION: rank projects for an NSIF student record",
+        "tags": [
+          "Extension"
+        ],
+        "description": "Pass the record returned by /students/by-netid/{net_id}. Mock heuristic; closed projects are excluded unless preferences.include_closed is true.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing or invalid x-api-key"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "NSIFStudentResponse": {
+        "type": "object",
+        "properties": {
+          "student_id": {
+            "type": "string"
+          },
+          "term": {
+            "type": "string",
+            "example": "F25"
+          },
+          "term_year": {
+            "type": "integer",
+            "nullable": true
+          },
+          "term_season": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "Fall",
+              "Spring"
+            ]
+          },
+          "full_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "net_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "college": {
+            "type": "string",
+            "nullable": true
+          },
+          "department": {
+            "type": "string",
+            "nullable": true
+          },
+          "plan": {
+            "type": "string",
+            "nullable": true
+          },
+          "sub_plan": {
+            "type": "string",
+            "nullable": true
+          },
+          "campus": {
+            "type": "string",
+            "nullable": true
+          },
+          "career_interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Active career_* flag names"
+          },
+          "experience_preferences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Active exp_* flag names"
+          },
+          "involvement_interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Active inv_* flag names"
+          },
+          "career_othertext": {
+            "type": "string",
+            "nullable": true
+          },
+          "exp_othertext": {
+            "type": "string",
+            "nullable": true
+          },
+          "inv_othertext": {
+            "type": "string",
+            "nullable": true
+          },
+          "research_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Derived from career flags (CAREER_TO_DOMAINS)"
+          }
+        },
+        "required": [
+          "student_id",
+          "term"
+        ]
+      },
+      "NSIFStudentListResponse": {
+        "type": "object",
+        "properties": {
+          "students": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NSIFStudentResponse"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "page_size": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "students",
+          "total",
+          "page",
+          "page_size"
+        ]
+      },
+      "NSIFFilterParams": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "nullable": true
+          },
+          "college": {
+            "type": "string",
+            "nullable": true,
+            "description": "Case-insensitive substring match"
+          },
+          "career_interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "AND: student must have all"
+          },
+          "experience_preferences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "AND: student must have all"
+          },
+          "research_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "OR: student must have at least one"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "NSIFStatsResponse": {
+        "type": "object",
+        "properties": {
+          "total_students": {
+            "type": "integer"
+          },
+          "terms": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "colleges": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "career_interests": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "experience_preferences": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Omits F21-only exp_employment / exp_coop (as the real API does)"
+          },
+          "research_domains": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": [
+          "total_students"
+        ]
+      },
+      "NSIFTermInfo": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "term_year": {
+            "type": "integer",
+            "nullable": true
+          },
+          "term_season": {
+            "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "term",
+          "count"
+        ]
+      },
+      "NSIFTermsResponse": {
+        "type": "object",
+        "properties": {
+          "terms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NSIFTermInfo"
+            }
+          }
+        },
+        "required": [
+          "terms"
+        ]
+      },
+      "NSIFDemoStudent": {
+        "type": "object",
+        "properties": {
+          "student_id": {
+            "type": "string"
+          },
+          "net_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "display_label": {
+            "type": "string",
+            "example": "Aramis Vega - Computer Science - Science (F25)"
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "college": {
+            "type": "string",
+            "nullable": true
+          },
+          "plan": {
+            "type": "string",
+            "nullable": true
+          },
+          "term": {
+            "type": "string"
+          },
+          "persona_label": {
+            "type": "string",
+            "description": "MOCK EXTENSION (personas only): selector label, e.g. 'Aramis, CS Student'"
+          },
+          "class_standing": {
+            "type": "string",
+            "description": "MOCK EXTENSION (personas only): from UAccess in the prototype; not in NSIF"
+          }
+        },
+        "required": [
+          "student_id",
+          "display_label",
+          "term"
+        ]
+      },
+      "NSIFDemoSampleResponse": {
+        "type": "object",
+        "properties": {
+          "students": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NSIFDemoStudent"
+            }
+          },
+          "total_in_db": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "students",
+          "total_in_db"
+        ],
+        "description": "Personas are listed first, then a stratified sample."
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "total_students": {
+            "type": "integer"
+          },
+          "total_terms": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "total_students",
+          "total_terms"
+        ]
+      },
+      "StudentCourseTerm": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "term_year": {
+            "type": "integer"
+          },
+          "term_season": {
+            "type": "string"
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "example": "CSC 110"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "catalog_nbr": {
+                  "type": "string"
+                },
+                "department_id": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "StudentCoursesResponse": {
+        "type": "object",
+        "properties": {
+          "student_id": {
+            "type": "string"
+          },
+          "terms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentCourseTerm"
+            }
+          }
+        }
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "catalog_nbr": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer"
+          },
+          "department_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "enrollment_total": {
+            "type": "integer"
+          },
+          "terms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Real course codes; titles are not available in the source data."
+      },
+      "CourseList": {
+        "type": "object",
+        "properties": {
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Course"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "page_size": {
+            "type": "integer"
+          }
+        }
+      },
+      "Department": {
+        "type": "object",
+        "properties": {
+          "department_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "has_courses": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DepartmentList": {
+        "type": "object",
+        "properties": {
+          "departments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Department"
+            }
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "Program": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "org_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "length": {
+            "type": "string",
+            "nullable": true
+          },
+          "incentive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "topic": {
+            "type": "string",
+            "nullable": true
+          },
+          "mentoring_information": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "eligibility": {
+            "type": "string",
+            "nullable": true
+          },
+          "program_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "credit_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "format": {
+            "type": "string",
+            "nullable": true
+          },
+          "audiences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "end_date": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "application_active": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "application_open": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "application_closed": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "application_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "ProgramList": {
+        "type": "object",
+        "properties": {
+          "programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Program"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "page_size": {
+            "type": "integer"
+          }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "likely_tasks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tasks_note": {
+            "type": "string"
+          },
+          "application_mode": {
+            "type": "string",
+            "enum": [
+              "conversational",
+              "structured"
+            ]
+          },
+          "application_status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "rolling",
+              "not_yet_open",
+              "closed"
+            ]
+          },
+          "application_opens": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "application_closes": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "spots": {
+            "type": "integer",
+            "nullable": true
+          },
+          "incentive": {
+            "type": "string",
+            "nullable": true
+          },
+          "credit": {
+            "type": "string",
+            "nullable": true
+          },
+          "format": {
+            "type": "string",
+            "nullable": true
+          },
+          "inferred": {
+            "type": "boolean",
+            "description": "Always true: the source has no project data"
+          },
+          "inferred_from": {
+            "type": "string",
+            "enum": [
+              "interests",
+              "department",
+              "none"
+            ]
+          },
+          "disclaimer": {
+            "type": "string"
+          }
+        },
+        "description": "SYNTHETIC project generated for the mock. Null for researchers who are not offering opportunities.",
+        "nullable": true
+      },
+      "FacultySummary": {
+        "type": "object",
+        "properties": {
+          "faculty_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "primary_department": {
+            "type": "string",
+            "nullable": true
+          },
+          "college": {
+            "type": "string",
+            "nullable": true
+          },
+          "research_interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "offering_opportunities": {
+            "type": "boolean"
+          },
+          "opportunity_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "For credit"
+            }
+          },
+          "majors_considered": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "research_locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          }
+        }
+      },
+      "Faculty": {
+        "type": "object",
+        "properties": {
+          "faculty_id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "graduate_faculty": {
+            "type": "boolean"
+          },
+          "research_interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "research_interests_raw": {
+            "type": "string",
+            "nullable": true
+          },
+          "offering_opportunities": {
+            "type": "boolean"
+          },
+          "prerequisite_courses": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free text as entered by the researcher"
+          },
+          "majors_considered": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "May contain run-together free text"
+          },
+          "opportunity_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "start_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "end_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "college": {
+            "type": "string",
+            "nullable": true
+          },
+          "primary_department": {
+            "type": "string",
+            "nullable": true
+          },
+          "affiliated_departments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "research_locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lab_website": {
+            "type": "string",
+            "nullable": true
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          }
+        },
+        "description": "Real data scraped from ur.arizona.edu on 2026-10-16, except `project` (synthetic)."
+      },
+      "FacultyList": {
+        "type": "object",
+        "properties": {
+          "faculty": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacultySummary"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "page_size": {
+            "type": "integer"
+          }
+        }
+      },
+      "MatchPreferences": {
+        "type": "object",
+        "properties": {
+          "paid": {
+            "type": "boolean"
+          },
+          "volunteer": {
+            "type": "boolean"
+          },
+          "for_credit": {
+            "type": "boolean"
+          },
+          "include_closed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "MatchRequest": {
+        "type": "object",
+        "properties": {
+          "student": {
+            "$ref": "#/components/schemas/NSIFStudentResponse",
+            "description": "An NSIF record, as returned by the student lookup routes"
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/MatchPreferences"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 10
+          }
+        },
+        "required": [
+          "student"
+        ]
+      },
+      "Match": {
+        "type": "object",
+        "properties": {
+          "faculty": {
+            "$ref": "#/components/schemas/FacultySummary"
+          },
+          "match": {
+            "type": "object",
+            "properties": {
+              "percent": {
+                "type": "integer",
+                "minimum": 30,
+                "maximum": 98
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Generated only from signals that fired"
+              },
+              "signals": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "description": "Component scores 0..1: major, domains, department, experience, availability"
+              }
+            }
+          }
+        }
+      },
+      "MatchResponse": {
+        "type": "object",
+        "properties": {
+          "student_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
+          },
+          "total_candidates": {
+            "type": "integer"
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "heuristic": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "description": "Mock heuristic; NOT the production recommender."
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "description": "FastAPI-style error body (string for 404/405, list of validation errors for 422)."
+      }
+    }
+  }
+}

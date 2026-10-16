@@ -1,0 +1,52 @@
+{
+  "students_rows": 221,
+  "distinct_students": 156,
+  "terms": {
+    "S23": 30,
+    "S22": 24,
+    "F23": 26,
+    "F21": 19,
+    "F24": 25,
+    "F22": 31,
+    "S25": 28,
+    "S24": 27,
+    "F25": 11
+  },
+  "colleges": {
+    "Eller College of Management": 44,
+    "College of Soc & Behav Sci": 30,
+    "College of Science": 28,
+    "College of Medicine": 16,
+    "College of Engineering": 36,
+    "College of Fine Arts": 7,
+    "Ag, Life & Envi Sci., Col of": 26,
+    "null": 1,
+    "College of Humanities": 9,
+    "College of Nursing": 7,
+    "College of Information Science": 8,
+    "Zuckerman Coll Public Health": 5,
+    "College of Pharmacy": 1,
+    "College of Education": 3
+  },
+  "courses": 877,
+  "subjects": 49,
+  "departments": 465,
+  "programs": 43,
+  "program_types": {
+    "Leadership": 4,
+    "Scholarship": 2,
+    "Experiential Learning": 4,
+    "Student Support": 19,
+    "Research": 6,
+    "Student Leadership": 1,
+    "Professional Development": 1,
+    "Mentorship": 3,
+    "Virtual": 1,
+    "In-Person;Virtual": 1,
+    "Outreach/Service": 1
+  },
+  "plans_in_pool": 133,
+  "min_k": 50,
+  "size_bytes": 449712,
+  "pii_check": "passed"
+}
