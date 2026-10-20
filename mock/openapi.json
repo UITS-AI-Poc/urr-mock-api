@@ -1204,6 +1204,22 @@
           "class_standing": {
             "type": "string",
             "description": "MOCK EXTENSION (personas only): from UAccess in the prototype; not in NSIF"
+          },
+          "persona_id": {
+            "type": "string",
+            "description": "MOCK EXTENSION (personas only): the prototype's persona key, e.g. 'jordan'"
+          },
+          "major_display": {
+            "type": "string",
+            "description": "MOCK EXTENSION (personas only): major as the prototype displays it"
+          },
+          "blurb": {
+            "type": "string",
+            "description": "MOCK EXTENSION (personas only): one-line description shown under the selector"
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/MatchPreferences",
+            "description": "MOCK EXTENSION (personas only): the persona's stated preferences; pass to POST /matches"
           }
         },
         "required": [

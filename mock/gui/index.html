@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CatCloud Research Mock</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="viewbar">
+  <label class="viewbar__label" for="persona">Viewing as</label>
+  <select id="persona" aria-label="Viewing as"></select>
+  <span id="blurb" class="viewbar__blurb"></span>
+  <label class="viewbar__toggle"><input type="checkbox" id="showScores"> mock scores</label>
+  <button id="restart" class="btn btn--ghost" type="button">&#8634; Restart</button>
+</header>
+<div id="banner" class="banner" hidden></div>
+<main id="app" aria-live="polite"></main>
+<button id="traceBtn" class="trace__btn" type="button">API calls (0)</button>
+<aside id="trace" class="trace" hidden>
+  <div class="trace__head"><strong>API calls</strong> <span id="mode"></span>
+    <button id="traceClose" class="btn btn--ghost" type="button">Close</button></div>
+  <ol id="traceList"></ol>
+</aside>
+<script src="app.js"></script>
+</body>
+</html>

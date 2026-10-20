@@ -82,7 +82,7 @@ SUBJECT_DEPT = {
     "MUS": "3503", "DNC": "3508", "FTV": "3509", "ANTH": "0410", "COMM": "3505",
     "RELI": "0405", "HIST": "0415", "AFAS": "0435", "SOC": "0418", "GEOG": "3008",
     "ISTA": "0481", "FREN": "0440", "ASTR": "0422", "SLHS": "3502", "LING": "0431",
-    "EAS": "0439", "MSE": "2804", "CHEE": "2803", "HNRS": "2514", "TLS": "3222",
+    "EAS": "0439", "AME": "2305", "MSE": "2804", "CHEE": "2803", "HNRS": "2514", "TLS": "3222",
     "EDP": "3211", "SERP": "3204", "JPN": "0439", "UNIV": None,
 }
 
@@ -362,37 +362,39 @@ def build_students(rng, plan_pool, plan_info, plan_subj_w, plan_main_subj, catal
 # class_standing is NOT part of the NSIF record (it comes from UAccess in the prototype), so it
 # lives in dataset["personas"], separate from the NSIF-shaped student records.
 # ---------------------------------------------------------------------------
-PERSONAS = [
-    dict(sid="90000001", net="aramis.demo", first="Aramis", last="Vega", label="Aramis, CS Student",
-         plan="Computer Science", college="College of Science", dept="0412", standing="Sophomore",
-         career=["career_data", "career_engineering", "career_research"],
-         exp=["exp_facresearch", "exp_internship", "exp_skills"], inv=["inv_acadclubs", "inv_internship"],
-         courses=[["CSC 110", "MATH 122A", "ENGL 101"], ["CSC 120", "MATH 129", "PHYS 141"]]),
-    dict(sid="90000002", net="steve.demo", first="Steve", last="Whitaker", label="Steve, English Student",
-         plan="English", college="College of Humanities", dept="0429", standing="Junior",
-         career=["career_arts", "career_educ", "career_law"],
-         exp=["exp_networking", "exp_teaching", "exp_internship"], inv=["inv_arts", "inv_leadership"],
-         courses=[["ENGL 101", "PHIL 150B1", "SPAN 101"], ["ENGL 201", "HIST 187", "PHIL 110"]]),
-    dict(sid="90000003", net="priya.demo", first="Priya", last="Nair", label="Priya, Nursing Student",
-         plan="Nursing", college="College of Nursing", dept="3301", standing="Sophomore",
+PERSONAS = [  # the students in the prototype's "Viewing as" dropdown (the faculty entry is not a student)
+    dict(pid="jordan", sid="90000001", net="jordan.demo", first="Jordan", last="Alvarez",
+         label="Jordan Alvarez \u2014 Sophomore, Psychology & Neuroscience", major_display="Psychology & Neuroscience",
+         blurb="Sophomore \u00b7 Psychology & Neuroscience \u2014 knows what they want",
+         prefs={"volunteer": True, "for_credit": True},
+         plan="Neuroscience & Cognitive Sci", college="College of Science", dept="0423", standing="Sophomore",
          career=["career_health", "career_research"],
-         exp=["exp_facresearch", "exp_service", "exp_precept"], inv=["inv_health", "inv_peermentor"],
-         courses=[["NURS 195", "CHEM 151", "PSIO 201"], ["NURS 356", "PSY 101", "MCB 181R"]]),
-    dict(sid="90000004", net="maya.demo", first="Maya", last="Okafor", label="Maya, Business Student",
-         plan="Business Management", college="Eller College of Management", dept="3004", standing="Freshman",
-         career=["career_business", "career_data"],
-         exp=["exp_internship", "exp_networking", "exp_leadership"], inv=["inv_acadclubs", "inv_employment"],
-         courses=[["ECON 200", "MATH 107", "ENGL 101"], ["ACCT 200", "MIS 111", "ECON 205"]]),
-    dict(sid="90000005", net="tomas.demo", first="Tomas", last="Reyes", label="Tomas, Biology Student",
-         plan="Biology", college="College of Science", dept="0417", standing="Junior",
-         career=["career_health", "career_research", "career_enviro"],
-         exp=["exp_facresearch", "exp_empresearch", "exp_skills"], inv=["inv_sustainability", "inv_acadclubs"],
-         courses=[["MCB 181R", "CHEM 151", "MATH 122A"], ["ECOL 182R", "CHEM 152", "PHYS 102"]]),
-    dict(sid="90000006", net="dana.demo", first="Dana", last="Kowalski", label="Dana, Psychology Student",
-         plan="Psychology", college="College of Soc & Behav Sci", dept="0423", standing="Senior",
-         career=["career_global", "career_health", "career_research"],
-         exp=["exp_facresearch", "exp_service", "exp_sigproject"], inv=["inv_health", "inv_firstgen"],
-         courses=[["PSY 101", "PSY 230", "PSY 200"], ["PSY 300", "PSY 360", "PSY 381"]]),
+         exp=["exp_facresearch", "exp_skills", "exp_service"], inv=["inv_acadclubs", "inv_health"],
+         courses=[["PSY 101", "NSC 101", "MATH 112"], ["PSY 230", "PSY 200", "NSC 170C1"]]),
+    dict(pid="amara", sid="90000002", net="amara.demo", first="Amara", last="Johnson",
+         label="Amara Johnson \u2014 Freshman, Physiology", major_display="Physiology",
+         blurb="Freshman \u00b7 Physiology \u2014 just exploring, no research experience yet",
+         prefs={"for_credit": True},
+         plan="Physiology", college="College of Medicine", dept="0705", standing="Freshman",
+         career=["career_unsure", "career_health"],
+         exp=["exp_service", "exp_facresearch"], inv=["inv_health", "inv_firstgen"],
+         courses=[["PSIO 101", "CHEM 151", "MATH 112"]]),
+    dict(pid="diego", sid="90000003", net="diego.demo", first="Diego", last="Ramirez",
+         label="Diego Ramirez \u2014 Junior, Mechanical Engineering", major_display="Mechanical Engineering",
+         blurb="Junior \u00b7 Mechanical Engineering \u2014 needs paid work, cares about sustainability",
+         prefs={"paid": True},
+         plan="Mechanical Engineering", college="College of Engineering", dept="2305", standing="Junior",
+         career=["career_engineering", "career_enviro"],
+         exp=["exp_internship", "exp_skills", "exp_sigproject"], inv=["inv_employment", "inv_sustainability"],
+         courses=[["MATH 129", "PHYS 141", "CHEM 151"], ["MATH 254", "PHYS 241", "AME 209"]]),
+    dict(pid="mei", sid="90000004", net="mei.demo", first="Mei", last="Tanaka",
+         label="Mei Tanaka \u2014 Freshman, Computer Science", major_display="Computer Science",
+         blurb="Freshman \u00b7 Computer Science \u2014 data-curious, would take pay or credit",
+         prefs={"paid": True, "for_credit": True},
+         plan="Computer Science", college="College of Science", dept="0412", standing="Freshman",
+         career=["career_data", "career_unsure"],
+         exp=["exp_internship", "exp_skills"], inv=["inv_acadclubs"],
+         courses=[["CSC 110", "MATH 122A", "ENGL 101"]]),
 ]
 PERSONA_TERM = "F25"
 
@@ -422,8 +424,9 @@ def add_personas(students, enrollments, catalog_codes, depts):
             {"term": t, "courses": [c for c in cs if c in catalog_codes]}
             for t, cs in zip(terms, p["courses"])
         ]
-        out.append({"student_id": p["sid"], "net_id": p["net"], "label": p["label"],
-                    "class_standing": p["standing"], "major": p["plan"]})
+        out.append({"student_id": p["sid"], "net_id": p["net"], "persona_id": p["pid"], "label": p["label"],
+                    "class_standing": p["standing"], "major": p["major_display"], "blurb": p["blurb"],
+                    "preferences": p["prefs"]})
     return out
 
 

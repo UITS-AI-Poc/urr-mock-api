@@ -57,7 +57,7 @@ class Nsif(unittest.TestCase):
         s, b = call("GET", "/students/demo-sample", {"count": "30"})
         self.assertEqual(s, 200)
         labels = [x.get("persona_label") for x in b["students"][: len(h.PERSONAS)]]
-        self.assertIn("Aramis, CS Student", labels)
+        self.assertIn("Mei Tanaka \u2014 Freshman, Computer Science", labels)
         self.assertLessEqual(len(b["students"]), 30)
         self.assertEqual(b["total_in_db"], len(h.STUDENTS))
         self.assertRegex(b["students"][0]["display_label"], r".+ - .+ - .+ \(F\d\d\)")
@@ -92,8 +92,8 @@ class RestApiEvent(unittest.TestCase):
     """REST API (payload v1) proxy events use `path` + `httpMethod`, not rawPath/requestContext.http."""
 
     def test_v1_get_and_post(self):
-        r = h.handler({"httpMethod": "GET", "path": "/api/v1/students/by-netid/aramis.demo",
-                       "queryStringParameters": None, "pathParameters": {"proxy": "students/by-netid/aramis.demo"},
+        r = h.handler({"httpMethod": "GET", "path": "/api/v1/students/by-netid/mei.demo",
+                       "queryStringParameters": None, "pathParameters": {"proxy": "students/by-netid/mei.demo"},
                        "requestContext": {"stage": "prod"}, "body": None, "isBase64Encoded": False})
         self.assertEqual(r["statusCode"], 200)
         rec = json.loads(r["body"])
@@ -138,7 +138,7 @@ class Matching(unittest.TestCase):
         return b
 
     def test_scores_sorted_and_bounded(self):
-        b = self.match("aramis.demo", limit=15)
+        b = self.match("mei.demo", limit=15)
         pcts = [m["match"]["percent"] for m in b["matches"]]
         self.assertEqual(pcts, sorted(pcts, reverse=True))
         self.assertTrue(all(30 <= p <= 98 for p in pcts))
@@ -146,26 +146,26 @@ class Matching(unittest.TestCase):
         self.assertTrue(all(m["match"]["reasons"] is not None for m in b["matches"]))
 
     def test_closed_excluded_by_default(self):
-        b = self.match("aramis.demo", limit=100)
+        b = self.match("mei.demo", limit=100)
         self.assertTrue(all(m["faculty"]["project"]["application_status"] != "closed" for m in b["matches"]))
-        b2 = self.match("aramis.demo", limit=100, preferences={"include_closed": True})
+        b2 = self.match("mei.demo", limit=100, preferences={"include_closed": True})
         self.assertGreater(b2["total_candidates"], b["total_candidates"])
 
     def test_personas_get_different_top_fields(self):
-        cs = self.match("aramis.demo")["matches"][:10]
-        en = self.match("steve.demo")["matches"][:10]
+        cs = self.match("mei.demo")["matches"][:10]
+        en = self.match("amara.demo")["matches"][:10]
         self.assertNotEqual({m["faculty"]["faculty_id"] for m in cs}, {m["faculty"]["faculty_id"] for m in en})
         cs_depts = " ".join((m["faculty"]["primary_department"] or "") for m in cs).lower()
         self.assertTrue(any(k in cs_depts for k in ("comput", "inform", "data", "math", "engineer", "science")))
 
     def test_preferences_affect_reasons(self):
-        b = self.match("aramis.demo", preferences={"paid": True}, limit=30)
+        b = self.match("mei.demo", preferences={"paid": True}, limit=30)
         paid = [m for m in b["matches"] if any("paid" in r.lower() for r in m["match"]["reasons"])]
         self.assertTrue(paid)
 
     def test_validation(self):
         self.assertEqual(call("POST", "/matches", body={})[0], 422)
-        _, rec = call("GET", f"/students/by-netid/aramis.demo")
+        _, rec = call("GET", f"/students/by-netid/mei.demo")
         self.assertEqual(call("POST", "/matches", body={"student": rec, "limit": 0})[0], 422)
 
 

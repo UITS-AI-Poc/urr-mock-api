@@ -1,35 +1,35 @@
 {
-  "students_rows": 221,
-  "distinct_students": 156,
+  "students_rows": 216,
+  "distinct_students": 154,
   "terms": {
     "S23": 30,
-    "S22": 24,
+    "S22": 22,
     "F23": 26,
     "F21": 19,
-    "F24": 25,
-    "F22": 31,
-    "S25": 28,
-    "S24": 27,
-    "F25": 11
+    "F24": 22,
+    "F22": 27,
+    "S25": 31,
+    "S24": 29,
+    "F25": 10
   },
   "colleges": {
-    "Eller College of Management": 44,
-    "College of Soc & Behav Sci": 30,
-    "College of Science": 28,
-    "College of Medicine": 16,
-    "College of Engineering": 36,
+    "Eller College of Management": 49,
+    "College of Soc & Behav Sci": 28,
+    "College of Science": 33,
+    "College of Medicine": 13,
+    "College of Engineering": 31,
     "College of Fine Arts": 7,
-    "Ag, Life & Envi Sci., Col of": 26,
+    "Ag, Life & Envi Sci., Col of": 22,
     "null": 1,
-    "College of Humanities": 9,
-    "College of Nursing": 7,
-    "College of Information Science": 8,
+    "College of Humanities": 7,
+    "College of Nursing": 5,
+    "College of Information Science": 12,
     "Zuckerman Coll Public Health": 5,
     "College of Pharmacy": 1,
-    "College of Education": 3
+    "College of Education": 2
   },
-  "courses": 877,
-  "subjects": 49,
+  "courses": 907,
+  "subjects": 50,
   "departments": 465,
   "programs": 43,
   "program_types": {
@@ -47,6 +47,6 @@
   },
   "plans_in_pool": 133,
   "min_k": 50,
-  "size_bytes": 449712,
+  "size_bytes": 450793,
   "pii_check": "passed"
 }

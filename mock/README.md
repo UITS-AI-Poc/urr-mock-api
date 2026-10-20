@@ -15,7 +15,7 @@ mock/
 ## Student selector flow
 
 1. `GET /api/v1/students/demo-sample` – personas come first (`persona_label`, `class_standing` are extra fields).
-2. `GET /api/v1/students/by-netid/{net_id}` – the student's NSIF record (e.g. `aramis.demo`).
+2. `GET /api/v1/students/by-netid/{net_id}` – the student's NSIF record (e.g. `jordan.demo`).
 3. `POST /api/v1/matches` with `{"student": <NSIF record>, "preferences": {...}, "limit": 10}` – ranked projects.
 
 `preferences` (all optional): `paid`, `volunteer`, `for_credit`, `include_closed` (booleans).

@@ -130,8 +130,12 @@ def _demo_student(s, persona=None):
            "first_name": s["first_name"], "last_name": s["last_name"], "college": s["college"],
            "plan": s["plan"], "term": s["term"]}
     if persona:  # additive fields for the CatCloud student selector (not in the real model)
+        out["persona_id"] = persona["persona_id"]
         out["persona_label"] = persona["label"]
         out["class_standing"] = persona["class_standing"]
+        out["major_display"] = persona["major"]
+        out["blurb"] = persona["blurb"]
+        out["preferences"] = persona["preferences"]
     return out
 
 
@@ -159,7 +163,8 @@ def demo_sample(query, **_):
         selected.extend(rows[:n])
     selected = selected[: max(0, count - len(persona_recs))]
     personas_out = [_demo_student(s, PERSONA_BY_SID[s["student_id"]]) for s in persona_recs]
-    personas_out.sort(key=lambda d: d["persona_label"])
+    order = {p["student_id"]: i for i, p in enumerate(PERSONAS)}  # keep the order defined in the dataset
+    personas_out.sort(key=lambda d: order[d["student_id"]])
     rest_out = sorted((_demo_student(s) for s in selected), key=lambda d: d["display_label"])
     return {"students": personas_out + rest_out, "total_in_db": total}
 
