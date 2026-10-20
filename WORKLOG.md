@@ -127,3 +127,6 @@
 - User ran `aws sso login --profile aipoc-admin` (token had expired). `cdk diff` showed a single change (Lambda code package replaced; no IAM/API/key changes); deployed (17s). Live API now serves the four prototype personas (jordan/amara/diego/mei, `.demo` netids) in prototype order, 216 student records.
 - `serve.py` (AWS mode, key fetched via CLI server-side) is running on 127.0.0.1:8765 started from this session. Browser check after a real reload: mode "AWS", no banner, demo-sample -> by-netid -> POST /matches all 200 (192/159/458 ms); switching Diego/Mei/Jordan gives persona-specific type chips and result counts (61/94/94), 0 failed calls. Note: a hash-only navigation does not reload the page, so the mode label can look stale until a real reload (cosmetic).
 - Still uncommitted/unpushed (handler, data, personas, openapi, GUI).
+
+### 2026-10-19 — Committed and pushed
+- Commit 0c8e96a (personas from the prototype + local GUI) pushed to origin/main (git@github.com-azedu:UITS-AI-Poc/urr-mock-api.git); remote HEAD matched local HEAD after fetch. Staged set checked first: no s3-data/, outputs.json, venvs or build output; secret-pattern scan clean (GUI holds only the API key id, not the value).
