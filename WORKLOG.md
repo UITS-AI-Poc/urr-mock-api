@@ -130,3 +130,7 @@
 
 ### 2026-10-19 — Committed and pushed
 - Commit 0c8e96a (personas from the prototype + local GUI) pushed to origin/main (git@github.com-azedu:UITS-AI-Poc/urr-mock-api.git); remote HEAD matched local HEAD after fetch. Staged set checked first: no s3-data/, outputs.json, venvs or build output; secret-pattern scan clean (GUI holds only the API key id, not the value).
+
+### 2026-10-19 — faculty.json tracking decision
+- User asked whether faculty.json is gitignored. It is not: `s3-data/ur-researchers/researchers.json` (raw scrape) is ignored, but `mock/lambda/data/faculty.json` (generated, must ship with the Lambda) is tracked and on origin/main with 485 real names + emails (public on ur.arizona.edu).
+- Decision: keep it tracked. User confirmed the GitHub repo UITS-AI-Poc/urr-mock-api is private. Rejected for now: stripping emails, or untracking and generating at deploy time (would need s3-data on the build machine and a history rewrite). Revisit if repo visibility ever widens.
