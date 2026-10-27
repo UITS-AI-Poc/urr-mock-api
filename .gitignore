@@ -1,6 +1,9 @@
 # Raw source data: real student/staff identifiers and ~700 MB. Never commit.
 s3-data/
 
+# Real scraped faculty names/emails (intermediate input to generate_faculty_synth.py). Never commit.
+mock/lambda/data/faculty.json
+
 # Build / env artifacts
 .venv/
 cdk.out/

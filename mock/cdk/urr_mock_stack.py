@@ -23,6 +23,12 @@ class UrrMockStack(cdk.Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs):
         super().__init__(scope, construct_id, **kwargs)
 
+        log_group = logs.LogGroup(
+            self,
+            "MockApiFunctionLogGroup",
+            retention=logs.RetentionDays.ONE_WEEK,
+            removal_policy=cdk.RemovalPolicy.DESTROY,
+        )
         fn = _lambda.Function(
             self,
             "MockApiFunction",
@@ -33,7 +39,7 @@ class UrrMockStack(cdk.Stack):
             ),
             memory_size=512,
             timeout=cdk.Duration.seconds(10),
-            log_retention=logs.RetentionDays.ONE_WEEK,
+            log_group=log_group,
             description="Mock NSIF + CatCloud API (synthetic students, real faculty)",
         )
 

@@ -227,7 +227,7 @@ def build(server):
                                 param("status", schema={"type": S, "enum": ["open", "rolling", "not_yet_open", "closed"]})],
                         "Extension"),
         "/faculty/{faculty_id}": get("EXTENSION: one researcher (full record)", {**ok("Faculty"), **ERR},
-                                     [param("faculty_id", "path", desc="The person slug, e.g. quinn-burke")],
+                                     [param("faculty_id", "path", desc="The person slug, e.g. casey-underwood")],
                                      "Extension"),
         "/matches": {"post": {
             "summary": "EXTENSION: rank projects for an NSIF student record", "tags": ["Extension"],
@@ -246,9 +246,10 @@ def build(server):
             "title": "URR mock API",
             "version": "1.0.0",
             "description": ("Read-only mock of the NSIF student-interest service plus CatCloud extension endpoints. "
-                            "Student data is synthetic; faculty are real (scraped from ur.arizona.edu on 2026-10-16); "
-                            "projects and match scores are synthetic/heuristic. Operations tagged `Extension` do not "
-                            "exist in the real NSIF service."),
+                            "Student data is synthetic; faculty title/department/interests are real (scraped from "
+                            "ur.arizona.edu on 2026-10-16) but faculty name/email are synthetic; projects and match "
+                            "scores are synthetic/heuristic. Operations tagged `Extension` do not exist in the real "
+                            "NSIF service."),
         },
         "servers": [{"url": server}],
         "tags": [{"name": "NSIF", "description": "Ported from services/nsif/api/routes.py"},

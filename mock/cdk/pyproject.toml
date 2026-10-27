@@ -1,0 +1,8 @@
+[project]
+name = "urr-mock-cdk"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "aws-cdk-lib==2.273.0",
+    "constructs>=10,<11",
+]

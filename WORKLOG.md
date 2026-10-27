@@ -134,3 +134,30 @@
 ### 2026-10-19 — faculty.json tracking decision
 - User asked whether faculty.json is gitignored. It is not: `s3-data/ur-researchers/researchers.json` (raw scrape) is ignored, but `mock/lambda/data/faculty.json` (generated, must ship with the Lambda) is tracked and on origin/main with 485 real names + emails (public on ur.arizona.edu).
 - Decision: keep it tracked. User confirmed the GitHub repo UITS-AI-Poc/urr-mock-api is private. Rejected for now: stripping emails, or untracking and generating at deploy time (would need s3-data on the build machine and a history rewrite). Revisit if repo visibility ever widens.
+
+### 2026-10-27 — CDK app switched from manual .venv to uv
+- Replaced `cdk/requirements.txt` with `cdk/pyproject.toml` (same two deps: aws-cdk-lib==2.273.0, constructs>=10,<11); `uv sync` generated `cdk/uv.lock` (not gitignored) and a uv-managed `.venv/` (still gitignored, but no longer manually created/activated).
+- `cdk.json` app entry changed from `.venv/bin/python app.py` to `uv run app.py`. Verified `cdk synth --profile aipoc-admin` produces the same template as before.
+- README redeploy instructions updated to drop `source .venv/bin/activate` / `pip install -r requirements.txt` in favor of `uv sync`. Not deployed; this is a tooling-only change, not committed/pushed yet.
+
+### 2026-10-27 — Deprecated Lambda logRetention replaced with explicit LogGroup
+- `cdk diff` surfaced a jsii deprecation warning on `aws_lambda.Function#logRetention` (removed in a future major; works today via a hidden custom-resource Lambda that calls PutRetentionPolicy after deploy). Also hit a separate, unrelated jsii warning about running on untested Node v26 — user chose to fix that for real (brew-swap + pin node@22) rather than silence it; not done in this session, just advised.
+- `mock/cdk/urr_mock_stack.py`: replaced `log_retention=logs.RetentionDays.ONE_WEEK` with an explicit `logs.LogGroup` (`RemovalPolicy.DESTROY`, same retention) passed via the function's `log_group=`. `cdk diff --profile aipoc-admin` confirmed the only change is removing the old custom-resource Lambda/role/policy and adding the real LogGroup + the function's LoggingConfig — no replacement of the function itself. Not deployed yet.
+
+### 2026-10-27 — gitleaks check ahead of making the repo public
+- Ran `gitleaks detect` on full git history (7 commits): no leaks. A working-tree-only scan flagged 3 false positives (Lambda asset zip hash misread as a generic API key) in `mock/cdk/cdk.out/`, which is gitignored build output, never committed.
+- Gitleaks only catches credential-shaped secrets, not PII — flagged that `mock/lambda/data/faculty.json` (485 real names/emails, tracked, decided 2026-10-19 to keep tracked "while the repo is private") is the actual blocker for going public, not anything gitleaks finds.
+
+### 2026-10-27 — Synthesized faculty identity; faculty.json untracked
+- User asked to desensitize faculty identity so the repo can go public: keep real title/department/interests/majors/prerequisites/courses (not identifying on their own) but replace name and email with synthetic values.
+- Added `mock/generate/generate_faculty_synth.py`: deterministic per-slug synthetic name/email (seeded hash of the real slug, so regeneration is stable), regenerates slug/url/faculty_id/project_id from the new name, and regexes the old surname out of `project.title`/`project.description` (the only place generate_faculty_projects.py had written `"<Lastname> group"` into prose) and replaces it with the new surname. Email domain is `mock.example.edu`, deliberately not arizona.edu.
+- Verified: no synthetic name/email collides with any real one, and no `arizona.edu` string survives in any synthetic record. One class of false positive while checking: synthetic surnames coincidentally matching real *institution* names in department titles (e.g. "The Norton School of Human Ecology", a real UA school name, not the researcher's own identity) — left as is, since department names are intentionally kept real.
+- `lambda/handler.py` now loads `data/faculty-synth.json` instead of `data/faculty.json`. `generate_openapi.py` updated (example slug, spec description wording). `openapi.json` regenerated; 18 tests pass.
+- `mock/lambda/data/faculty.json` removed from git tracking (`git rm --cached`, file kept on disk — still needed locally as the input to generate_faculty_synth.py) and added to the root `.gitignore`. `faculty-synth.json` is the new tracked/served file. README updated (directory map, regen steps, provenance table) to describe the real scrape as a gitignored intermediate and faculty-synth.json as what ships.
+- Not committed, not pushed, not redeployed — the live API still serves the old real-identity faculty.json until a redeploy.
+
+### 2026-10-27 — Deployed synthetic faculty identity + LogGroup fix; verified live
+- `cdk diff --profile aipoc-admin`: only the Lambda code asset hash (new bundle with faculty-synth.json + urr_mock_stack.py changes) and the LogGroup swap from the prior entry; no IAM/API/key changes. Deployed (`cdk deploy --require-approval never`), ~54s.
+- Verified against the live API (key fetched via `aws apigateway get-api-key`): no-key request still 403; `/faculty?page_size=1` returns `casey-underwood` / "Casey Underwood" (was "Quinn Burke" pre-deploy) with description text correctly rewritten to "The Underwood group"; full record email is `casey.underwood@mock.example.edu` (no `arizona.edu`); `/health` unchanged (216 students, 9 terms); persona flow (`students/by-netid/jordan.demo` -> `POST /matches`) returns a synthetic faculty name in the top match with real department/interest text.
+- Re-ran `gitleaks detect --no-git` on `mock/lambda/` post-deploy: no leaks. Confirmed no faculty email in the served file contains `arizona.edu`.
+- Still open: not committed/pushed (working tree has the faculty.json untracking, uv/cdk changes, and this deploy's source changes); repo visibility (public) decision itself still pending on the user.

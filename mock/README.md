@@ -6,8 +6,8 @@ Spec: [openapi.json](openapi.json) (OpenAPI 3.0.3).
 
 ```
 mock/
-  generate/   generate_dataset.py, generate_faculty_projects.py, generate_openapi.py, scrape_ur_researchers.py (one-off)
-  lambda/     handler.py + data/dataset.json + data/faculty.json
+  generate/   generate_dataset.py, generate_faculty_projects.py, generate_faculty_synth.py, generate_openapi.py, scrape_ur_researchers.py (one-off)
+  lambda/     handler.py + data/dataset.json + data/faculty-synth.json
   cdk/        app.py, urr_mock_stack.py
   tests/      test_handler.py
 ```
@@ -45,16 +45,23 @@ List routes take `page` and `page_size`. CORS is open (`*`). There are no write 
 ## Regenerating data
 
 The raw inputs live in `s3-data/` at the repo root, which is **not in this repo** (real student/staff identifiers, ~700 MB).
-The committed `lambda/data/*.json` are the generated outputs, so the API can be redeployed without it. `faculty.json` also
-doubles as the 2026-10-16 scrape snapshot, so `scrape_ur_researchers.py` output is not committed.
+The committed `lambda/data/dataset.json` is a generated output, so the API can be redeployed without `s3-data/`.
+
+`lambda/data/faculty.json` (real scraped names/emails + synthetic project) is an intermediate file, **not committed** —
+it is gitignored because it carries real faculty names/emails. `generate_faculty_synth.py` turns it into
+`lambda/data/faculty-synth.json` (real title/department/interests/majors/courses, but synthetic name/email, slug, and
+faculty_id), which **is** committed and is what the Lambda actually serves.
 
 ```bash
 cd mock/generate
 python3 -I generate_dataset.py --s3-data ../../s3-data --out ../lambda/data/dataset.json
 python3 -I generate_faculty_projects.py --in ../../s3-data/ur-researchers/researchers.json --out ../lambda/data/faculty.json
+python3 -I generate_faculty_synth.py --in ../lambda/data/faculty.json --out ../lambda/data/faculty-synth.json
 python3 -m unittest discover -s ../tests -v      # from mock/tests
 ```
 `scrape_ur_researchers.py` is a one-off snapshot (2026-10-16) of ur.arizona.edu; it is cached and not part of the build.
+Regenerating `faculty.json` requires `s3-data/ur-researchers/researchers.json` (the raw scrape) on the build machine;
+`faculty-synth.json` alone is enough to run or redeploy the API.
 
 ## Deployed instance
 
@@ -73,7 +80,7 @@ curl -H "x-api-key: $KEY" https://nzm36p0h50.execute-api.us-west-2.amazonaws.com
 Redeploy after changing data or the handler (review the diff first):
 
 ```bash
-cd mock/cdk && source .venv/bin/activate        # pip install -r requirements.txt first time
+cd mock/cdk                                     # uv sync first time; cdk.json runs the app via `uv run`
 cdk diff --profile aipoc-admin
 cdk deploy --profile aipoc-admin
 ```
@@ -89,7 +96,8 @@ Regenerate the spec with `python3 -I generate_openapi.py --out ../openapi.json`.
 | Departments (id + name) | Real (staff-titles-enriched). Subject -> department mapping is hand-made. |
 | Plans / colleges | Real PeopleSoft values (UA_SR_CAREER_PROG_PLAN); frequencies from active students. College strings may not match NSIF's spelling. |
 | Programs | Sampled from "Programs and Program Accounts.csv"; HTML stripped. |
-| Faculty (name, title, email, department, interests, majors, prerequisites, opportunity types) | Real, scraped from ur.arizona.edu (485 researchers). Emails are public on that site. |
+| Faculty (title, department, interests, majors, prerequisites, opportunity types) | Real, scraped from ur.arizona.edu (485 researchers). |
+| Faculty **name and email** | **Synthetic.** The real scrape (with real names/emails) is gitignored; only `faculty-synth.json` (synthetic identity) is committed and served. |
 | Faculty **projects** (title, description, tasks, application mode/status/dates, spots) | **Synthetic**, flagged `inferred: true`. The source has no descriptions or project data. |
 | Students (ids, names, netIDs, survey answers, enrollments) | **Synthetic.** Enrollments drawn from plan->subject aggregates (>=50 real students), never from one real student. |
 | Personas (6) | Synthetic and hand-set; names will change when the prototype defines them. |

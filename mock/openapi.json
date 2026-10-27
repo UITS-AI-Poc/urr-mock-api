@@ -3,7 +3,7 @@
   "info": {
     "title": "URR mock API",
     "version": "1.0.0",
-    "description": "Read-only mock of the NSIF student-interest service plus CatCloud extension endpoints. Student data is synthetic; faculty are real (scraped from ur.arizona.edu on 2026-10-16); projects and match scores are synthetic/heuristic. Operations tagged `Extension` do not exist in the real NSIF service."
+    "description": "Read-only mock of the NSIF student-interest service plus CatCloud extension endpoints. Student data is synthetic; faculty title/department/interests are real (scraped from ur.arizona.edu on 2026-10-16) but faculty name/email are synthetic; projects and match scores are synthetic/heuristic. Operations tagged `Extension` do not exist in the real NSIF service."
   },
   "servers": [
     {
@@ -836,7 +836,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The person slug, e.g. quinn-burke"
+            "description": "The person slug, e.g. casey-underwood"
           }
         ],
         "security": [
