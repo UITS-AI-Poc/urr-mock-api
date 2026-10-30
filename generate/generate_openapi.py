@@ -1,4 +1,4 @@
-"""Write mock/openapi.json (OpenAPI 3.0.3) describing the mock API.
+"""Write openapi.json (OpenAPI 3.0.3) describing the mock API.
 
 Usage: python3 -I generate_openapi.py --out ../openapi.json [--server https://.../prod/api/v1]
 Schemas mirror services/nsif/models.py for the NSIF routes; extension schemas mirror the data

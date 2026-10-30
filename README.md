@@ -5,7 +5,7 @@ prototype needs. REST API (API Gateway, API key required) -> one Python Lambda, 
 Spec: [openapi.json](openapi.json) (OpenAPI 3.0.3).
 
 ```
-mock/
+./
   generate/   generate_dataset.py, generate_faculty_projects.py, generate_faculty_synth.py, generate_openapi.py, scrape_ur_researchers.py (one-off)
   lambda/     handler.py + data/dataset.json + data/faculty-synth.json
   cdk/        app.py, urr_mock_stack.py
@@ -17,6 +17,9 @@ mock/
 1. `GET /api/v1/students/demo-sample` – personas come first (`persona_label`, `class_standing` are extra fields).
 2. `GET /api/v1/students/by-netid/{net_id}` – the student's NSIF record (e.g. `jordan.demo`).
 3. `POST /api/v1/matches` with `{"student": <NSIF record>, "preferences": {...}, "limit": 10}` – ranked projects.
+
+Every request needs an `x-api-key` header. The key is stored in Stache:
+<https://stache.arizona.edu/entry/638738a3d38ce5c8092f8b7996fa2941>. Do not commit it.
 
 `preferences` (all optional): `paid`, `volunteer`, `for_credit`, `include_closed` (booleans).
 Matching is a mock heuristic (plan / interest-domain / preference overlap), **not** the production recommender.
@@ -53,11 +56,11 @@ it is gitignored because it carries real faculty names/emails. `generate_faculty
 faculty_id), which **is** committed and is what the Lambda actually serves.
 
 ```bash
-cd mock/generate
+cd generate
 python3 -I generate_dataset.py --s3-data ../../s3-data --out ../lambda/data/dataset.json
 python3 -I generate_faculty_projects.py --in ../../s3-data/ur-researchers/researchers.json --out ../lambda/data/faculty.json
 python3 -I generate_faculty_synth.py --in ../lambda/data/faculty.json --out ../lambda/data/faculty-synth.json
-python3 -m unittest discover -s ../tests -v      # from mock/tests
+python3 -m unittest discover -s ../tests -v      # from tests
 ```
 `scrape_ur_researchers.py` is a one-off snapshot (2026-10-16) of ur.arizona.edu; it is cached and not part of the build.
 Regenerating `faculty.json` requires `s3-data/ur-researchers/researchers.json` (the raw scrape) on the build machine;
@@ -80,7 +83,7 @@ curl -H "x-api-key: $KEY" https://nzm36p0h50.execute-api.us-west-2.amazonaws.com
 Redeploy after changing data or the handler (review the diff first):
 
 ```bash
-cd mock/cdk                                     # uv sync first time; cdk.json runs the app via `uv run`
+cd cdk                                     # uv sync first time; cdk.json runs the app via `uv run`
 cdk diff --profile aipoc-admin
 cdk deploy --profile aipoc-admin
 ```

@@ -1,7 +1,7 @@
 """Build mock faculty + project listings from the scraped UR availability snapshot.
 
 Input : s3-data/ur-researchers/researchers.json   (485 real researchers, scrape_ur_researchers.py)
-Output: mock/lambda/data/faculty.json
+Output: lambda/data/faculty.json
 
 Faculty fields are real (as scraped). Everything under "project" is SYNTHETIC and flagged
 `inferred: true`: the source feed has no descriptions, project titles, task lists, application

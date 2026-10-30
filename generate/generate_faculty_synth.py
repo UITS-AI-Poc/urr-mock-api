@@ -1,7 +1,7 @@
 """Replace real faculty identity (name, email, slug-derived ids) with synthetic names.
 
-Input : mock/lambda/data/faculty.json          (real scraped name/email + synthetic project)
-Output: mock/lambda/data/faculty-synth.json    (synthetic name/email; everything else unchanged)
+Input : lambda/data/faculty.json          (real scraped name/email + synthetic project)
+Output: lambda/data/faculty-synth.json    (synthetic name/email; everything else unchanged)
 
 Only identity fields are touched: name, email, slug, url, faculty_id, project_id, and the
 "<Lastname> group" phrase generate_faculty_projects.py wrote into project.description.

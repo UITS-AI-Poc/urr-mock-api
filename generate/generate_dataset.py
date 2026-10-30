@@ -508,7 +508,7 @@ def main():
     used_subj = {c["subject"] for c in catalog}
     dataset = {
         "meta": {
-            "generated_by": "mock/generate/generate_dataset.py", "seed": SEED,
+            "generated_by": "generate/generate_dataset.py", "seed": SEED,
             "synthetic_students": True,
             "note": "Course codes, departments and programs are real; students, names, ids and survey answers are synthetic.",
         },

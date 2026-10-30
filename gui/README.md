@@ -4,7 +4,7 @@ A local GUI that follows the current prototype (researchopportunities.netlify.ap
 It exists so you can verify the API data and the persona -> NSIF lookup -> `POST /matches` flow in a real UI.
 
 ```bash
-cd mock/gui
+cd gui
 python3 serve.py              # proxies to the deployed AWS API; needs a valid SSO session
 python3 serve.py --local      # no AWS: runs the bundled Lambda handler in-process (data/handler in this repo)
 ```

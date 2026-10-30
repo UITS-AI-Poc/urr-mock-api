@@ -167,3 +167,19 @@
 - User's call: that level of leakage is fine (self-published public bios/lab pages, already public on ur.arizona.edu, not new exposure). Not changed; left exactly as computed on 2026-10-27.
 - Git had no author identity configured in this environment (`fatal: unable to auto-detect email address`). Prior commits on this repo used `Brett Bendickson <bbendick@arizona.edu>`; set that as **local** (not --global) repo config with the user's explicit go-ahead, then committed (d9e05f0: uv switch, logGroup fix, faculty synthesis) and pushed to `origin/main`.
 - `gh` was not on PATH in the first shell invocation this session (fixed itself on retry — environment quirk, not resolved/explained). `gh repo edit UITS-AI-Poc/urr-mock-api --visibility public --accept-visibility-change-consequences` run per the user's explicit instruction; confirmed via `gh repo view`: visibility is now PUBLIC.
+
+### 2026-10-29 — Root README.md
+- Repo had no root README (only `mock/README.md`). Added `README.md` at the repo root documenting every route: 9 NSIF routes, 8 extension routes (courses, departments, programs, faculty, matches), and the local GUI server's routes (`/`, `/__config`, `/api/v1/*` proxy). Parameters, defaults, and error behavior were read from `mock/lambda/handler.py` and `mock/gui/serve.py`, not from the old README.
+- Per the user, the README points to the API key's Stache entry (https://stache.arizona.edu/entry/638738a3d38ce5c8092f8b7996fa2941) and does not contain the key. I did not open the Stache page or fetch the key.
+- Not verified: the endpoint descriptions were not exercised against the live API in this session. Not committed or pushed.
+
+### 2026-10-29 — Flatten `mock/` into the repo root
+- User's request: the repo (origin `UITS-AI-Poc/urr-mock-api`) should hold the former `mock/` contents at its root. Done with plain `mv` (so gitignored files such as `lambda/data/faculty.json` moved too), staged so git records renames. `mock/` removed.
+- Root `README.md` conflict: user chose to keep `mock/README.md`. The route-by-route root README written earlier today is saved untracked as `README.root.md` (its `mock/...` links are stale); not merged, not decided what to do with it.
+- Fixed `mock/` path references: `.gitignore` (faculty.json), README/gui README commands, docstrings in generate/*.py and lambda/handler.py. `../../s3-data` became `../s3-data` (same directory as before). `generated_by` in `lambda/data/dataset.json` still says `mock/generate/...` until the dataset is regenerated; not edited by hand.
+- `cdk/.venv` was deleted and recreated with `uv sync` because the move breaks venv paths. 18 unit tests pass. `cdk synth` not re-run.
+- `urr-aws-aisdlc/` is an untracked sibling that was already in the repo dir; left untouched. Not committed or pushed.
+
+### 2026-10-29 — Correction: repo lives in `urr/mock/`, not `urr/`
+- The previous entry misread the request. Intended layout: `urr/` is a plain directory (not a repo) containing `mock/` (the `urr-mock-api` repo, former `mock/` contents at its root) and `urr-aws-aisdlc/` (separate, outside the repo).
+- Fix: moved everything (including `.git`, `.gitignore`) from `urr/` into `urr/mock/`; `urr-aws-aisdlc/` stays in `urr/`. Reverted `s3-data` doc paths to `../../s3-data` (raw data sits in `urr/`, outside the repo). Other path fixes from the previous entry stand. Tests pass. Not committed or pushed.
